@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FaGoogle } from "react-icons/fa";
+import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function LoginPage() {
@@ -24,8 +24,13 @@ export default function LoginPage() {
         </form>
         <div className="flex flex-col gap-6 items-center">
           <p className="text-sm">or continue with</p>
-          <div className="border-2 border-black p-2 rounded-full cursor-pointer">
-            <FaGoogle size={35} />
+          <div className="flex gap-5">
+            <div className="border-2 border-black p-2 rounded-full cursor-pointer">
+              <FaGoogle size={35} />
+            </div>
+            <div className="border-2 border-black p-2 rounded-full cursor-pointer">
+              <FaFacebook size={35} />
+            </div>
           </div>
           <p className="text-sm mt-9">
             not a member?{" "}

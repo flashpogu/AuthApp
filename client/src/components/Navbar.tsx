@@ -24,7 +24,7 @@ export default function Navbar() {
               <NavLink to="/">Home</NavLink>
             </li>
             <li>
-              <NavLink to="/blogs">Blogs</NavLink>
+              <NavLink to="/profile">Profile</NavLink>
             </li>
             <li>
               <NavLink to="/projects">Projects</NavLink>
