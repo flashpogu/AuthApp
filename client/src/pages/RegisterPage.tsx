@@ -1,9 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
+  interface FormData {
+    [key: string]: string;
+  }
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({});
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.id]: e.target.value,
+    }));
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      await res.json();
+      if (res.ok) {
+        setFormData({});
+        toast("Registered successfully!🫡");
+      } else {
+        toast("Something went wrong.😕");
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast(JSON.stringify(error));
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col-reverse lg:flex-row lg:px-28 px-8 py-10">
       <div className="flex flex-col flex-1 gap-10 items-center border-y-2 border-l-2 border-gray-200 lg:rounded-y-xl lg:rounded-l-xl rounded-b-xl justify-center bg-gray-50 pt-10 lg:pt-0">
@@ -14,13 +53,34 @@ export default function RegisterPage() {
             <span className="font-semibold text-gray-500">AuthApp</span>
           </p>
         </div>
-        <form className="flex flex-col gap-4 mx-40 lg:w-1/2 w-[75%]">
-          <Input type="text" placeholder="Username" />
-          <Input type="email" placeholder="Email" />
-          <Input type="password" placeholder="Password" />
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 mx-40 lg:w-1/2 w-[75%]"
+        >
+          <Input
+            id="username"
+            onChange={handleChange}
+            type="text"
+            placeholder="Username"
+            value={formData.username || ""}
+          />
+          <Input
+            id="email"
+            onChange={handleChange}
+            type="email"
+            placeholder="Email"
+            value={formData.email || ""}
+          />
+          <Input
+            id="password"
+            onChange={handleChange}
+            type="password"
+            placeholder="Password"
+            value={formData.password || ""}
+          />
 
-          <Button className="mt-6" type="submit">
-            Register
+          <Button disabled={loading} className="mt-6" type="submit">
+            {loading ? "Loading..." : "Register"}
           </Button>
         </form>
         <div className="flex flex-col gap-6 items-center">
