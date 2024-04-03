@@ -1,9 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { fetchApi } from "@/lib/fetchApi";
 import { Link } from "react-router-dom";
 
 export default function LoginPage() {
+  interface FormData {
+    [key: string]: string;
+  }
+
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { username } = formData;
+    if (username.includes("@") && username.includes(".")) {
+      fetchApi(
+        { email: formData.username, password: formData.password },
+        "/api/auth/login",
+        "Log in Sucessfully! 😍",
+        "Something went wrong.😕",
+        setLoading,
+        setFormData
+      );
+    } else {
+      fetchApi(
+        formData,
+        "/api/auth/login",
+        "Log in Sucessfully! 😍",
+        "Something went wrong.😕",
+        setLoading,
+        setFormData
+      );
+    }
+  };
   return (
     <div className="flex flex-col-reverse lg:flex-row lg:px-28 px-8 py-10">
       <div className="flex flex-col flex-1 gap-10 items-center border-y-2 border-l-2 border-gray-200 lg:rounded-y-xl lg:rounded-l-xl rounded-b-xl justify-center bg-gray-50 pt-10 lg:pt-0">
@@ -14,12 +53,27 @@ export default function LoginPage() {
             <span className="font-semibold text-gray-500">AuthApp</span>
           </p>
         </div>
-        <form className="flex flex-col gap-4 mx-40 lg:w-1/2 w-[75%]">
-          <Input type="text" placeholder="Username" />
-          <Input type="password" placeholder="Password" />
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 mx-40 lg:w-1/2 w-[75%]"
+        >
+          <Input
+            onChange={handleChange}
+            id="username"
+            type="text"
+            placeholder="Username"
+            value={formData.username || ""}
+          />
+          <Input
+            onChange={handleChange}
+            id="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password || ""}
+          />
           <p className="text-sm self-end cursor-pointer">forgot password?</p>
-          <Button className="" type="submit">
-            Login
+          <Button disabled={loading} className="" type="submit">
+            {loading ? "Loading..." : "Login"}
           </Button>
         </form>
         <div className="flex flex-col gap-6 items-center">

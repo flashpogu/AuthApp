@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { fetchApi } from "@/lib/fetchApi";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 
 export default function RegisterPage() {
   interface FormData {
@@ -19,29 +19,14 @@ export default function RegisterPage() {
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      await res.json();
-      if (res.ok) {
-        setFormData({});
-        toast("Registered successfully!🫡");
-      } else {
-        toast("Something went wrong.😕");
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast(JSON.stringify(error));
-    } finally {
-      setLoading(false);
-    }
+    fetchApi(
+      formData,
+      "/api/auth/register",
+      "Registered successfully!🫡",
+      "Something went wrong.😕",
+      setLoading,
+      setFormData
+    );
   };
   return (
     <div className="flex flex-col-reverse lg:flex-row lg:px-28 px-8 py-10">
