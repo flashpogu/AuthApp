@@ -33,7 +33,7 @@ export default function Navbar() {
               <NavLink to="/about">About</NavLink>
             </li>
             <li>
-              <NavLink to="/contact">Contact</NavLink>
+              <NavLink to="/register">Join Us</NavLink>
             </li>
           </ul>
         </div>
