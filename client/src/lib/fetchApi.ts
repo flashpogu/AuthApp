@@ -1,3 +1,8 @@
+import {
+  signInSuccess,
+  signInFailure,
+  signInStart,
+} from "@/redux/user/userSlice";
 import { toast } from "sonner";
 
 interface FormData {
@@ -9,11 +14,14 @@ export const fetchApi = async (
   link: string,
   toastMsg1: string,
   toastMsg2: string,
-  setLoading: (loading: boolean) => void,
-  setFormData: (formData: FormData) => void
+  setFormData: (formData: FormData) => void,
+  navigate: (navigateLink: string) => void,
+  navigateLink: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch: any
 ) => {
   try {
-    setLoading(true);
+    dispatch(signInStart());
     const res = await fetch(link, {
       method: "POST",
       headers: {
@@ -21,18 +29,22 @@ export const fetchApi = async (
       },
       body: JSON.stringify(data),
     });
-    await res.json();
-    if (res.ok) {
-      setFormData({});
+    const dataGet = await res.json();
+    if (dataGet.success) {
+      dispatch(signInSuccess(dataGet));
       toast(toastMsg1);
+    }
+
+    if (res.ok) {
+      navigate(navigateLink);
+      dispatch(!signInStart());
+      setFormData({});
     } else {
+      dispatch(!signInStart());
       toast(toastMsg2);
     }
-    setLoading(false);
   } catch (error) {
-    setLoading(false);
-    toast(JSON.stringify(error));
-  } finally {
-    setLoading(false);
+    dispatch(signInFailure(error));
+    console.log(error);
   }
 };

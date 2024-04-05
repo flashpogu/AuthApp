@@ -1,15 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { fetchApi } from "@/lib/fetchApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import OAuthGoogle from "@/components/OAuthGoogle";
+import OAuthFacebook from "@/components/OAuthFacebook";
 
 export default function RegisterPage() {
+  interface RootState {
+    user: {
+      loading: boolean;
+    };
+  }
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
   interface FormData {
     [key: string]: string;
   }
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevFormData) => ({
@@ -24,8 +33,10 @@ export default function RegisterPage() {
       "/api/auth/register",
       "Registered successfully!🫡",
       "Something went wrong.😕",
-      setLoading,
-      setFormData
+      setFormData,
+      navigate,
+      "/login",
+      dispatch
     );
   };
   return (
@@ -72,10 +83,10 @@ export default function RegisterPage() {
           <p className="text-sm">or continue with</p>
           <div className="flex gap-5">
             <div className="border-2 border-black p-2 rounded-full cursor-pointer">
-              <FaGoogle size={35} />
+              <OAuthGoogle />
             </div>
             <div className="border-2 border-black p-2 rounded-full cursor-pointer">
-              <FaFacebook size={35} />
+              <OAuthFacebook />
             </div>
           </div>
           <p className="text-sm mt-9">

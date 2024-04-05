@@ -1,16 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { fetchApi } from "@/lib/fetchApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import OAuthGoogle from "@/components/OAuthGoogle";
+import OAuthFacebook from "@/components/OAuthFacebook";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   interface FormData {
     [key: string]: string;
   }
+  interface RootState {
+    user: {
+      loading: boolean;
+    };
+  }
 
-  const [loading, setLoading] = useState(false);
+  const { loading } = useSelector((state: RootState) => state.user);
   const [formData, setFormData] = useState<FormData>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +38,10 @@ export default function LoginPage() {
         "/api/auth/login",
         "Log in Sucessfully! 😍",
         "Something went wrong.😕",
-        setLoading,
-        setFormData
+        setFormData,
+        navigate,
+        "/profile",
+        dispatch
       );
     } else {
       fetchApi(
@@ -38,8 +49,10 @@ export default function LoginPage() {
         "/api/auth/login",
         "Log in Sucessfully! 😍",
         "Something went wrong.😕",
-        setLoading,
-        setFormData
+        setFormData,
+        navigate,
+        "/profile",
+        dispatch
       );
     }
   };
@@ -80,10 +93,10 @@ export default function LoginPage() {
           <p className="text-sm">or continue with</p>
           <div className="flex gap-5">
             <div className="border-2 border-black p-2 rounded-full cursor-pointer">
-              <FaGoogle size={35} />
+              <OAuthGoogle />
             </div>
             <div className="border-2 border-black p-2 rounded-full cursor-pointer">
-              <FaFacebook size={35} />
+              <OAuthFacebook />
             </div>
           </div>
           <p className="text-sm mt-9">
