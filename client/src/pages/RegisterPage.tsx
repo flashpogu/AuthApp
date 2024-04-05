@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import { fetchApi } from "@/lib/fetchApi";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import OAuthGoogle from "@/components/OAuthGoogle";
 import OAuthFacebook from "@/components/OAuthFacebook";
+import {
+  signInSuccess,
+  signInFailure,
+  signInStart,
+} from "@/redux/user/userSlice";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   interface RootState {
@@ -28,16 +33,31 @@ export default function RegisterPage() {
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchApi(
-      formData,
-      "/api/auth/register",
-      "Registered successfully!🫡",
-      "Something went wrong.😕",
-      setFormData,
-      navigate,
-      "/login",
-      dispatch
-    );
+    try {
+      dispatch(signInStart());
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const dataGet = await res.json();
+      console.log(dataGet);
+      if (dataGet.success === false) {
+        dispatch(signInFailure(dataGet.success));
+        toast("Something went wrong.😕");
+      } else {
+        dispatch(signInSuccess(dataGet));
+        toast("Registered successfully!🫡");
+        navigate("/login");
+        setFormData({});
+      }
+    } catch (error) {
+      dispatch(signInFailure(error));
+      toast("Something went wrong.😕");
+      console.log(error);
+    }
   };
   return (
     <div className="flex flex-col-reverse lg:flex-row lg:px-28 px-8 py-10">
