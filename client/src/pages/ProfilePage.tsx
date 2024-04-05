@@ -11,13 +11,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSelector } from "react-redux";
 
 export default function ProfilePage() {
+  interface RootState {
+    user: {
+      currentUser: {
+        profilePicture: string;
+        email: string;
+        username: string;
+      };
+    };
+  }
+  const { currentUser } = useSelector((state: RootState) => state.user);
   return (
     <div className="flex flex-col items-center mt-10 gap-5">
       <div>
         <Avatar className="w-24 h-24 cursor-pointer">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarImage src={currentUser.profilePicture} alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </div>
@@ -38,12 +49,12 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="space-y-1">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" defaultValue="Pedro Duarte" />
+                  <Label htmlFor="name">Email</Label>
+                  <Input id="email" defaultValue={currentUser.email} />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="username">Username</Label>
-                  <Input id="username" defaultValue="@peduarte" />
+                  <Input id="username" defaultValue={currentUser.username} />
                 </div>
               </CardContent>
               <CardFooter>

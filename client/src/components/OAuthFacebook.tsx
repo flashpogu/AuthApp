@@ -3,9 +3,11 @@ import { signInWithPopup, getAuth, FacebookAuthProvider } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "@/redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Oauth() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleFacebookClick = async () => {
     try {
       const provider = new FacebookAuthProvider();
@@ -25,6 +27,7 @@ export default function Oauth() {
       });
       const data = await res.json();
       dispatch(signInSuccess(data));
+      navigate("/profile");
     } catch (error) {
       console.log("could not login with Facebook", error);
     }
