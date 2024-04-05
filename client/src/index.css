@@ -159,6 +159,7 @@
 
   .nav-elements.active {
     width: 270px;
+    z-index: 999;
   }
 
   .nav-elements ul {

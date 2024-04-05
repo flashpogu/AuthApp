@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSelector } from "react-redux";
 
 export default function ProfilePage() {
+  const filePickerRef = useRef<HTMLInputElement>(null);
+  const [image, setImage] = useState<File | undefined>(undefined);
   interface RootState {
     user: {
       currentUser: {
@@ -24,11 +27,30 @@ export default function ProfilePage() {
     };
   }
   const { currentUser } = useSelector((state: RootState) => state.user);
+  console.log(image);
   return (
-    <div className="flex flex-col items-center mt-10 gap-5">
+    <div className="flex flex-col justify-center items-center mt-10 gap-5 ">
       <div>
+        <input
+          type="file"
+          accept="image/*"
+          ref={filePickerRef}
+          hidden
+          onChange={(e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              setImage(files[0]);
+            }
+          }}
+        />
         <Avatar className="w-24 h-24 cursor-pointer">
-          <AvatarImage src={currentUser.profilePicture} alt="@shadcn" />
+          <AvatarImage
+            onClick={() => filePickerRef.current?.click()}
+            className="z-0"
+            src={currentUser.profilePicture}
+            alt="@shadcn"
+          />
+
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </div>
@@ -86,6 +108,12 @@ export default function ProfilePage() {
             </Card>
           </TabsContent>
         </Tabs>
+      </div>
+      <div className="flex items-center lg:w-1/4 w-3/4 justify-between">
+        <button className="text-red-700 hover:text-red-900">
+          Delete Account
+        </button>
+        <button className="text-red-700 hover:text-red-900">Sign Out</button>
       </div>
     </div>
   );
