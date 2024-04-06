@@ -4,17 +4,27 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 dotenv.config();
 
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connect successfully!"))
   .catch((err) => console.log(err));
+
+const __dirname = path.resolve();
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/dist", "index.html"));
+});
 
 // Middleware for handling error
 app.use((err, req, res, next) => {
